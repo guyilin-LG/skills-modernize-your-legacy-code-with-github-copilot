@@ -44,6 +44,19 @@ class DataProgram {
 
     this.balanceCents = balanceCents;
   }
+
+  execute(operation, balanceCents) {
+    if (operation === 'READ') {
+      return this.read();
+    }
+
+    if (operation === 'WRITE') {
+      this.write(balanceCents);
+      return this.read();
+    }
+
+    return undefined;
+  }
 }
 
 class Operations {
@@ -52,25 +65,25 @@ class Operations {
   }
 
   total() {
-    return this.dataProgram.read();
+    return this.dataProgram.execute('READ');
   }
 
   credit(amountCents) {
-    const currentBalanceCents = this.dataProgram.read();
+    const currentBalanceCents = this.dataProgram.execute('READ');
     const newBalanceCents = currentBalanceCents + amountCents;
-    this.dataProgram.write(newBalanceCents);
+    this.dataProgram.execute('WRITE', newBalanceCents);
     return newBalanceCents;
   }
 
   debit(amountCents) {
-    const currentBalanceCents = this.dataProgram.read();
+    const currentBalanceCents = this.dataProgram.execute('READ');
 
     if (currentBalanceCents < amountCents) {
       return { success: false, balanceCents: currentBalanceCents };
     }
 
     const newBalanceCents = currentBalanceCents - amountCents;
-    this.dataProgram.write(newBalanceCents);
+    this.dataProgram.execute('WRITE', newBalanceCents);
     return { success: true, balanceCents: newBalanceCents };
   }
 }
